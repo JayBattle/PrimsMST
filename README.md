@@ -3,8 +3,8 @@ A OOP approach to Prim's Minimum Spanning Tree Algorithm in C#
 
 Author: Jay Battle
 Course: COEN 4650
-Refrences: My alma mater, Chu et. al.
-Languages: C#
+Refrences: My alma mater, Cormen et. al.
+Languages: C# 
 Platform: Command Line, .Net Core
 Dev Enviorment: Visual Studio 2017
 Purpose: Class C# Project Prototype
