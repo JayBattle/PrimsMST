@@ -1,0 +1,9 @@
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\bin\Debug\netcoreapp1.1\PrimsMST.deps.json
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\bin\Debug\netcoreapp1.1\PrimsMST.runtimeconfig.json
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\bin\Debug\netcoreapp1.1\PrimsMST.runtimeconfig.dev.json
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\bin\Debug\netcoreapp1.1\PrimsMST.dll
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\bin\Debug\netcoreapp1.1\PrimsMST.pdb
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\obj\Debug\netcoreapp1.1\PrimsMST.csprojResolveAssemblyReference.cache
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\obj\Debug\netcoreapp1.1\PrimsMST.AssemblyInfo.cs
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\obj\Debug\netcoreapp1.1\PrimsMST.dll
+C:\Users\Jalen\Dropbox\Classes\Code\Repos\PrimsMST\PrimsMST\obj\Debug\netcoreapp1.1\PrimsMST.pdb
