@@ -27,7 +27,6 @@ namespace PrimsMST {
             public string NodeB;
             public int Distance;
 
-
             public Edge(string nodeA, string nodeB, int dist) {
                 Distance = dist;
                 NodeA = nodeA;
@@ -69,49 +68,28 @@ namespace PrimsMST {
             }
 
             //select starting node
-            nodes.TryGetValue("1", out Node currNode);
+            nodes.TryGetValue("8", out Node currNode);
             nodes[currNode.Name].DistanceToParent = 0; //4. r.key = 0
-
 
             //Main Loop
             while (nodes.Count != mappedNodeCount) { //6. while Q != null
-                nodes[currNode.Name].Mapped = true;
-                mappedNodeCount++;
-                bool minNotFound = true;
                 string nextNodeName = "";
-                while (minNotFound && currNode.Vertices.Count != 0) {
-                    int minDist = System.Int32.MaxValue;
-                    foreach (KeyValuePair<string, int> vertex in currNode.Vertices) { //7. u = Extract-Min(q)
-                        if (minDist > vertex.Value) {
-                            minDist = vertex.Value;
-                            nextNodeName = vertex.Key;
-                        }
-                    }
-                    currNode.Vertices.Remove(nextNodeName);
-                    if (nextNodeName != "") {
-                        if (!nodes[nextNodeName].Mapped || mappedNodeCount == nodes.Count) {
-                            minNotFound = false;
-                            Console.Write(currNode.Name + " to ");
-                            Console.Write(nextNodeName + " w/ Distance of " + minDist + " Miles");
-                            Console.WriteLine("");
-                            nodes[nextNodeName].Parent = currNode.Name;
-                            nodes[nextNodeName].DistanceToParent = minDist;
-                            Dictionary<string, int> adjVertices = new Dictionary<string, int>();
-                            foreach (KeyValuePair<string, int> vertex in nodes[currNode.Name].Vertices) { //8. foreach v in G.Adj[u]
-                                if (nodes.ContainsKey(vertex.Key)) { //9. if v in Q and w(u,v) < v.key
-                                    if (nodes[vertex.Key].Parent == "" && nodes[vertex.Key].DistanceToParent > nodes[nextNodeName].DistanceToParent) {
-                                        nodes[vertex.Key].Parent = vertex.Key; //v.pi = u //was currNode?
-                                        nodes[vertex.Key].DistanceToParent = vertex.Value; //11. v.key = w(u,v)
-                                    }
-                                }
-                            }
-                        }
+                int minDist = System.Int32.MaxValue;
+                foreach (KeyValuePair<string, Node> entry in nodes) { //7. u = Extract-Min(q)     
+                    if (minDist > entry.Value.DistanceToParent && entry.Value.Mapped == false) {
+                        minDist = entry.Value.DistanceToParent;
+                        nextNodeName = entry.Key;
                     }
                 }
-                if (minNotFound) {
-                    foreach (KeyValuePair<string, Node> node in nodes) if (!node.Value.Mapped) nextNodeName = node.Key;
+                if (mappedNodeCount != 0) Console.WriteLine(nodes[nextNodeName].Parent + " to " + nextNodeName + " w/ Distance of " + minDist + " Miles");
+                mappedNodeCount++;
+                nodes[nextNodeName].Mapped = true;
+                foreach (KeyValuePair<string, int> vertex in nodes[nextNodeName].Vertices) { //8. foreach v in G.Adj[u]
+                    if (!nodes[vertex.Key].Mapped && nodes[vertex.Key].DistanceToParent > vertex.Value) { //9. if v in Q and w(u,v) < v.key
+                        nodes[vertex.Key].Parent = nextNodeName; //v.pi = u //was currNode?
+                        nodes[vertex.Key].DistanceToParent = vertex.Value; //11. v.key = w(u,v)
+                    }
                 }
-                currNode = nodes[nextNodeName];
             }
             Console.WriteLine("Press Any Key To Exit");
             Console.ReadKey();
