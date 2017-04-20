@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace PrimsMST {
     class Prims {
@@ -33,53 +34,83 @@ namespace PrimsMST {
             }
         }
 
-        public static List<Edge> edgeList = new List<Edge>();
-        public static List<string> nodeList = new List<string>();
-        public static Dictionary<string, Node> nodes = new Dictionary<string, Node>();
+        public static bool DebugMode = true;
 
         static void Main(string[] args) {
 
-            loadEdges("PrototypeDists.txt");
-            defineNodes();
-            int mappedNodeCount = 0;
-            nodes.TryGetValue("1", out Node currNode);
-            nodes[currNode.Name].DistanceToParent = 0;
+            string inputFileName;
+            Dictionary<string, Node> nodes = new Dictionary<string, Node>();
 
-            while (nodes.Count != mappedNodeCount) {
-                string nextNodeName = getMinNodeName();
-                if (mappedNodeCount != 0) Console.WriteLine(nodes[nextNodeName].Parent + " to " + nextNodeName + " w/ Distance of " + nodes[nextNodeName].DistanceToParent + " Miles");
-                mappedNodeCount++;
-                nodes[nextNodeName].Mapped = true;
-                updateVertcies(nextNodeName);
+            Console.WriteLine("Please enter the name of input file (ex: PrototypeDists.txt): ");
+            if (DebugMode) inputFileName = "PrototypeDists.txt";
+            else inputFileName = Console.ReadLine();
+            if (!File.Exists(inputFileName)) printMessageAndExit("The file " + inputFileName + " does not exist!");
+            else nodes = loadEdgesFromFile(inputFileName);
+
+            string startNodeName = "";
+            while (startNodeName != "exit") {
+                Console.WriteLine("Please enter the name of the desired starting node or exit to quit: ");
+                startNodeName = Console.ReadLine();
+                if (startNodeName == "exit") printMessageAndExit("Exit Prims");
+                else if (verifyNode(nodes, startNodeName)) mapNodes(nodes, startNodeName);
+                else Console.WriteLine("The node " + startNodeName + " does not exist!");
+                Console.WriteLine("All Nodes Napped");
+                foreach (KeyValuePair<string, Node> entry in nodes) entry.Value.Mapped = false;
             }
-            Console.WriteLine("Press Any Key To Exit");
-            Console.ReadKey();
-
         }
 
-        public static void loadEdges(string edgeFileName) {
+        private static void printMessageAndExit(string error) {
+            Console.WriteLine(error);
+            Console.WriteLine("Press Any Key To Exit");
+            Console.ReadKey();
+            Environment.Exit(0);
+        }
+
+        private static Dictionary<string, Node> loadEdgesFromFile(string edgeFileName) {
+            List<Edge> edges = new List<Edge>();
+            List<string> nodeList = new List<string>();
             string[] edgeArray = System.IO.File.ReadAllLines(edgeFileName);
             foreach (string edgeString in edgeArray) {
                 string[] edgeInfo = edgeString.Split(',');
                 Edge currEdge = new Edge(edgeInfo[0], edgeInfo[1], Convert.ToInt32(edgeInfo[2]));
-                edgeList.Add(currEdge);
+                edges.Add(currEdge);
                 if (!nodeList.Contains(currEdge.NodeA)) nodeList.Add(currEdge.NodeA);
                 if (!nodeList.Contains(currEdge.NodeB)) nodeList.Add(currEdge.NodeB);
             }
+            return defineNodes(nodeList, edges);
         }
 
-        public static void defineNodes() {
+        private static Dictionary<string, Node> defineNodes(List<string> nodeList, List<Edge> edges) {
+            Dictionary<string, Node> nodes = new Dictionary<string, Node>();
             foreach (string thisNode in nodeList) {
                 Node newNode = new Node(thisNode);
-                foreach (Edge edge in edgeList) {
+                foreach (Edge edge in edges) {
                     if (newNode.Name == edge.NodeA) newNode.Vertices.Add(edge.NodeB, edge.Distance);
                     if (newNode.Name == edge.NodeB) newNode.Vertices.Add(edge.NodeA, edge.Distance);
                 }
                 nodes.Add(thisNode, newNode);
             }
+            return nodes;
         }
 
-        public static string getMinNodeName() {
+        private static bool verifyNode(Dictionary<string, Node> nodes, string node) {
+            if (nodes.ContainsKey(node)) return true;
+            else return false;
+        }
+
+        private static void mapNodes(Dictionary<string, Node> nodes, string startNodeName) {
+            int mappedNodeCount = 0;
+            nodes[startNodeName].DistanceToParent = 0;
+            while (nodes.Count != mappedNodeCount) {
+                string nextNodeName = getMinNodeName(nodes);
+                if (mappedNodeCount != 0) Console.WriteLine(nodes[nextNodeName].Parent + " to " + nextNodeName + " w/ Distance of " + nodes[nextNodeName].DistanceToParent + " Miles");
+                mappedNodeCount++;
+                nodes[nextNodeName].Mapped = true;
+                updateVertcies(nodes, nextNodeName);
+            }
+        }
+
+        private static string getMinNodeName(Dictionary<string, Node> nodes) {
             string nextNodeName = "";
             int minDist = System.Int32.MaxValue;
             foreach (KeyValuePair<string, Node> entry in nodes) {
@@ -91,7 +122,7 @@ namespace PrimsMST {
             return nextNodeName;
         }
 
-        public static void updateVertcies(string nextNodeName) {
+        private static void updateVertcies(Dictionary<string, Node> nodes, string nextNodeName) {
             foreach (KeyValuePair<string, int> vertex in nodes[nextNodeName].Vertices) {
                 if (!nodes[vertex.Key].Mapped && nodes[vertex.Key].DistanceToParent > vertex.Value) {
                     nodes[vertex.Key].Parent = nextNodeName;
