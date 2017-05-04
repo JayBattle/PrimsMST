@@ -9,14 +9,14 @@ namespace PrimsMST {
             public string Name;
             public string Parent;
             public int DistanceToParent;
-            public Dictionary<string, int> Vertices;
+            public Dictionary<string, int> AdjNodes;
             public bool Mapped;
 
             public Node(string name) {
                 DistanceToParent = System.Int32.MaxValue;
                 Parent = "";
                 Name = name;
-                Vertices = new Dictionary<string, int>();
+                AdjNodes = new Dictionary<string, int>();
                 Mapped = false;
             }
 
@@ -85,8 +85,8 @@ namespace PrimsMST {
             foreach (string thisNode in nodeList) {
                 Node newNode = new Node(thisNode);
                 foreach (Edge edge in edges) {
-                    if (newNode.Name == edge.NodeA) newNode.Vertices.Add(edge.NodeB, edge.Distance);
-                    if (newNode.Name == edge.NodeB) newNode.Vertices.Add(edge.NodeA, edge.Distance);
+                    if (newNode.Name == edge.NodeA) newNode.AdjNodes.Add(edge.NodeB, edge.Distance);
+                    if (newNode.Name == edge.NodeB) newNode.AdjNodes.Add(edge.NodeA, edge.Distance);
                 }
                 nodes.Add(thisNode, newNode);
             }
@@ -106,7 +106,7 @@ namespace PrimsMST {
                 if (mappedNodeCount != 0) Console.WriteLine(nodes[nextNodeName].Parent + " to " + nextNodeName + " w/ Distance of " + nodes[nextNodeName].DistanceToParent + " Miles");
                 mappedNodeCount++;
                 nodes[nextNodeName].Mapped = true;
-                updateVertcies(nodes, nextNodeName);
+                updateAdjNodes(nodes, nextNodeName);
             }
         }
 
@@ -122,11 +122,11 @@ namespace PrimsMST {
             return nextNodeName;
         }
 
-        private static void updateVertcies(Dictionary<string, Node> nodes, string nextNodeName) {
-            foreach (KeyValuePair<string, int> vertex in nodes[nextNodeName].Vertices) {
-                if (!nodes[vertex.Key].Mapped && nodes[vertex.Key].DistanceToParent > vertex.Value) {
-                    nodes[vertex.Key].Parent = nextNodeName;
-                    nodes[vertex.Key].DistanceToParent = vertex.Value;
+        private static void updateAdjNodes(Dictionary<string, Node> nodes, string nextNodeName) {
+            foreach (KeyValuePair<string, int> currNode in nodes[nextNodeName].AdjNodes) {
+                if (!nodes[currNode.Key].Mapped && nodes[currNode.Key].DistanceToParent > currNode.Value) {
+                    nodes[currNode.Key].Parent = nextNodeName;
+                    nodes[currNode.Key].DistanceToParent = currNode.Value;
                 }
             }
         }
